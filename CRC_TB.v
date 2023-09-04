@@ -12,8 +12,8 @@ parameter  Test_Cases = 10;
 
 parameter  LFSR_WD_tb = 8;
 parameter  DATA_WD_tb = 8;
-parameter  Seed_tb = 'b1101_1000;
-parameter  Taps_tb = 'b0100_0100;
+parameter  Seed_tb = 8'b1101_1000;
+parameter  Taps_tb = 8'b0100_0100;
 
 //  DUT Signals
 reg                         DATA_tb;
@@ -47,8 +47,8 @@ initial
         $dumpvars; 
     
     // Read Input Files
-        $readmemh("E:/Digital Diploma/Verilog/Assignments/Session_5/5.0/DATA_h.txt", Test_inputs);
-        $readmemh("E:/Digital Diploma/Verilog/Assignments/Session_5/5.0/Expec_Out_h.txt", Expected_outputs);
+        $readmemh("DATA_h.txt", Test_inputs);
+        $readmemh("Expec_Out_h.txt", Expected_outputs);
 
     // initialization
         initialize();
@@ -56,12 +56,13 @@ initial
     // Test Cases
         for (j=0;j<Test_Cases;j=j+1)
         begin
+            reset ();
             crc_operation(Test_inputs[j]) ;               // do_lfsr_operation
             check_out(Expected_outputs[j],j) ;           // check output response
         end
 
     #100
-    $stop ;
+      $stop ;
 
  end
 ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -93,16 +94,14 @@ task crc_operation;
  input  [DATA_WD_tb-1:0]     input_data_tb;
  integer i;
  begin
-
-    reset ();
     ACTIVE_tb = 1'b1;
     for (i = 0; i<DATA_WD_tb ;i=i+1 ) 
-    begin
-       DATA_tb <= input_data_tb[i]; // Update the serial data signal
-        #(CLK_PERIOD);  
-    end      // Wait for CLK Period between each bit
+        begin
+            DATA_tb <= input_data_tb[i]; // Update the serial data signal
+                #(CLK_PERIOD);  
+        end      // Wait for CLK Period between each bit
 
-     ACTIVE_tb = 1'b0;  
+    ACTIVE_tb = 1'b0;  
  end
 endtask
 
@@ -113,14 +112,14 @@ task check_out ;
  
  reg    [LFSR_WD_tb-1:0]               generated_output;
  
- integer i;
+ integer k;
  
  begin
     if (Valid_tb) 
     begin
-            for(i=0; i<LFSR_WD_tb; i=i+1)
+            for(k=0; k<LFSR_WD_tb; k=k+1)
                 begin
-                #(CLK_PERIOD) generated_output[i] = CRC_tb ;
+                #(CLK_PERIOD) generated_output[k] = CRC_tb ;
                 end
             if(generated_output == expected_output) 
                 $display("Test Case %d is succeeded",operation_number);
