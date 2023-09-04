@@ -3,7 +3,7 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////
 module CRC #(parameter 	LFSR_WD = 8,			//linear feedback shift register width (8,16,32...) 
 						DATA_WD = 8, 			//input data width (8,16,32...)
-						Seed = 'b1101_1000,		//the value that counter return to after reset 
+						Seed = 'b1101_1000,		//the value that LFSR return to after reset 
 						Taps = 'b0100_0100		//the implementation of LFSR (place of xor gates)
 						)
 (
